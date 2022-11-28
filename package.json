@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "build": "npx tailwindcss -i src/input.css -o dest/main.css && python src/generator.py"
+    "tailwind": "python src/generate_tailwind_config.py",
+    "build": "npx tailwindcss -i build/input.css -o build/main.css -c build/tailwind.config.js && python src/generator.py"
   },
   "devDependencies": {
     "tailwindcss": "^3.2.4"
