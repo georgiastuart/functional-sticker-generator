@@ -67,6 +67,7 @@ ctx.fill();
 {%- if sticker['pattern'] %}
 ctx.restore();
 const patternImg = new Image();
+patternImg.crossOrigin="anonymous";
 patternImg.src = './patterns/{{ sticker['pattern'] }}.png';
 patternImg.onload = function() {
 const pattern = ctx.createPattern(patternImg, 'repeat');

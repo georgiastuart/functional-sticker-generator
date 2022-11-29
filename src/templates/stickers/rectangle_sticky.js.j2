@@ -18,6 +18,7 @@ ctx.fillRect(100, 100, 800, {{ h_ar / w_ar * 800 }});
 {%- if sticker['pattern'] %}
 ctx.restore();
 const patternImg = new Image();
+patternImg.crossOrigin="anonymous";
 patternImg.src = './patterns/{{ sticker['pattern'] }}.png';
 patternImg.onload = function() {
 const pattern = ctx.createPattern(patternImg, 'repeat');
