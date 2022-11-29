@@ -33,7 +33,7 @@ jobs:
       - name: Install playwright browsers
         run: playwright install
       - name: Build planner pages 
-        run: npm run build -- --color ${{ matrix.color }}
+        run: npm run build -- --color "${{ matrix.color }}"
       - name: Zip images
         run: rm build/stickers/.gitignore && zip -r stickers-${{ matrix.color }}.zip build/stickers
       - name: Upload planner pdf to artifacts
