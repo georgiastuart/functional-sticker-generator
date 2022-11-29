@@ -12,9 +12,9 @@ jobs:
       matrix:
         python-version: ["3.10"]
         color:
-          - '#823777'
-          - '#d9cbb4'
-          - '#f29807'
+          - '823777'
+          - 'd9cbb4'
+          - 'f29807'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -33,9 +33,9 @@ jobs:
       - name: Install playwright browsers
         run: playwright install
       - name: Build planner pages 
-        run: npm run build -- --color "${{ matrix.color }}"
+        run: npm run build -- --color "#${{ matrix.color }}"
       - name: Zip images
-        run: rm build/stickers/.gitignore && zip -r stickers-${{ matrix.color }}.zip build/stickers
+        run: rm build/stickers/.gitignore && mkdir stickers-${{ matrix.color }} && cp build/stickers/* stickers-${{ matrix.color }} && zip -r stickers-${{ matrix.color }}.zip stickers-${{ matrix.color }}
       - name: Upload planner pdf to artifacts
         uses: actions/upload-artifact@v3
         with:
