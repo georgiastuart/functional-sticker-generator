@@ -1,0 +1,27 @@
+ctx.save()
+ctx.fillStyle = '{{ sticker['color'][4] }}'
+{%- if sticker['alpha'] %}
+ctx.globalAlpha = {{ sticker['alpha'] }};
+{%- endif %}
+{%- if sticker['shadow'] %}
+ctx.shadowColor = '#b8b9ba';
+ctx.shadowBlur = 10;
+ctx.shadowOffsetX = 10;
+ctx.shadowOffsetY = 10;
+{%- endif %}
+ctx.arc(500, 500, 400, 0, 2 * Math.PI, false)
+ctx.fill();
+{%- if sticker['icon'] %}
+ctx.restore(); 
+setTimeout(() => {
+  let font = '900 500px "Font Awesome 6 Free"';
+  document.fonts.load(font, "\u{{ sticker['icon'] }}").then(result => {
+    console.log(result);
+  ctx.font = font;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'white';
+  ctx.fillText("\u{{ sticker['icon'] }}", 500, 500);
+  });
+}, 1000)
+{%- endif %}

@@ -10,6 +10,7 @@ from multiprocessing import Process
 from io import BytesIO
 from PIL import Image
 from base64 import b64decode
+from time import sleep
 
 def generate_colors(hex_value):
   colors = [hex_value]
@@ -50,6 +51,7 @@ def generate_pngs(html_file, js_file, out_directory):
     page = browser.new_page()
     page.goto('http://127.0.0.1:8097')
     page.add_script_tag(path=abspath(js_file))
+    sleep(2)
     images_b64 = page.locator('canvas').evaluate_all("""elements => {
         let images = [];
         for (let i = 0; i < elements.length; i++) {
@@ -80,7 +82,16 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   with open(args.config, 'r') as fp:
-    stickers = yaml.safe_load(fp)['stickers']
+    config = yaml.safe_load(fp)
+    stickers = config['stickers']
+    icons = config['icons']
+
+  for icon in icons:
+    stickers.append({
+      'name': f'icon-{ icon["name"] }',
+      'icon': icon['code'],
+      'file': 'circle.js.j2'
+    })
 
   color_array = generate_colors(args.color)
 

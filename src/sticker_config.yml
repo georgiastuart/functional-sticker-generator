@@ -1,3 +1,23 @@
+icons:
+  - name: briefcase
+    code: f0b1
+  - name: calendar
+    code: f133
+  - name: dog
+    code: f6d3
+  - name: cat
+    code: f6be
+  - name: handshake
+    code: f2b5
+  - name: meeting
+    code: f0c0
+  - name: heart
+    code: f004
+  - name: cloud
+    code: f0c2
+  - name: cloud-sun
+    code: f6c4
+
 stickers:
   - name: plain-sticky
     file: rectangle_sticky.js.j2
@@ -41,3 +61,5 @@ stickers:
     seed: 7
     alpha: 0.5
     offset: 0.2
+  - name: plain-dot
+    file: circle.js.j2
