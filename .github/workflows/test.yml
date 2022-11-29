@@ -29,7 +29,7 @@ jobs:
           auto-update-conda: true 
           python-version: ${{ matrix.python-version }}
       - name: Install python dependencies
-        run: yes | pip install Jinja2 playwright Pillow
+        run: yes | pip install Jinja2 playwright Pillow webcolors
       - name: Install playwright browsers
         run: playwright install
       - name: Build planner pages 
