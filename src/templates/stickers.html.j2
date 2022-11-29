@@ -1,3 +1,3 @@
-{% for sticker_file in stickers %}
-<canvas width="2000" height= "2000" class="pt-5" id="{{ sticker_file.strip().replace('.html.j2', '') }}"></canvas>
+{% for sticker in stickers %}
+<canvas width="1000" height= "1000" style="padding-top: 2em;" id="{{ sticker['name'].strip() }}"></canvas>
 {% endfor %}

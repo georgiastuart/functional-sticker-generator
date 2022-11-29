@@ -6,5 +6,6 @@
 
 - Python >= 3.9
 - webcolors 
+- pyyaml
 - playwright (Python)
 - Node / NPM

@@ -1,0 +1,43 @@
+stickers:
+  - name: plain-sticky
+    file: rectangle_sticky.js.j2
+  - name: plain-paper-sticky
+    file: rectangle_sticky.js.j2
+    pattern: light-paper-fibers
+  - name: plain-sticky-skinny
+    file: rectangle_sticky.js.j2
+    aspect_ratio: '1/2'
+  - name: plain-paper-sticky-skinny
+    file: rectangle_sticky.js.j2
+    aspect_ratio: '1/2'
+    pattern: light-paper-fibers
+  - name: plain-sticky-shadow
+    file: rectangle_sticky.js.j2
+    shadow: true
+  - name: plain-paper-sticky-shadow
+    file: rectangle_sticky.js.j2
+    pattern: light-paper-fibers
+    shadow: true
+  - name: jagged-bottom-sticky
+    file: jagged_rectangle.js.j2
+    jagged_bottom: true
+    seed: 1
+  - name: jagged-bottom-sticky-shadow
+    file: jagged_rectangle.js.j2
+    shadow: true
+    jagged_bottom: true
+    seed: 1
+  - name: jagged-bottom-sticky-shadow-paper
+    file: jagged_rectangle.js.j2
+    shadow: true
+    jagged_bottom: true
+    seed: 1
+    pattern: light-paper-fibers
+  - name: tape-translucent
+    file: jagged_rectangle.js.j2
+    jagged_left: true 
+    jagged_right: true 
+    aspect_ratio: "4/1"
+    seed: 7
+    alpha: 0.5
+    offset: 0.2

@@ -1,0 +1,92 @@
+{%- with w_ar=sticker['aspect_ratio'].strip().split('/')[0]|float, h_ar=sticker['aspect_ratio'].strip().split('/')[1]|float %}
+ctx.save();
+{%- if sticker['alpha'] %}
+ctx.globalAlpha = {{ sticker['alpha'] }};
+{%- endif %}
+{%- if sticker['offset'] %}
+let offset = {{ sticker['offset'] }};
+{%- else %}
+let offset = 0.1;
+{%- endif %}
+{%- if w_ar <= h_ar %}
+let width = {{ w_ar / h_ar * 800 }};
+let height = 800;
+{%- else %}
+let width = 800;
+let height = {{ h_ar / w_ar * 800 }};
+{%- endif %} 
+let topLeft = {x: 100, y: 100};
+let topRight = {x: topLeft.x + width, y: topLeft.y};
+let bottomRight = {x: topRight.x, y: topRight.y + height};
+let bottomLeft = {x: bottomRight.x - width, y: bottomRight.y};
+let depth = 10;
+{%- if sticker['jagged_top'] %}
+let topEdge = generateJaggedEdge(topLeft, topRight, depth, offset, {{ sticker['seed'] }});
+{%- else %}
+let topEdge = [topLeft, topRight];
+{%- endif %}
+{%- if sticker['jagged_right'] %}
+let rightEdge = generateJaggedEdge(topRight, bottomRight, depth, offset, {{ sticker['seed'] + 1 }});
+{%- else %}
+let rightEdge = [topRight, bottomRight];
+{%- endif %}
+{%- if sticker['jagged_bottom'] %}
+let bottomEdge = generateJaggedEdge(bottomRight, bottomLeft, depth, offset, {{ sticker['seed'] + 2 }});
+{%- else %}
+let bottomEdge = [bottomRight, bottomLeft];
+{%- endif %}
+{%- if sticker['jagged_left'] %}
+let leftEdge = generateJaggedEdge(bottomLeft, topLeft, depth, offset, {{ sticker['seed'] + 3 }});
+{%- else %}
+let leftEdge = [bottomLeft, topLeft];
+{%- endif %}
+{%- if sticker['shadow'] %}
+ctx.shadowColor = '#b8b9ba';
+ctx.shadowBlur = 10;
+ctx.shadowOffsetX = 10;
+ctx.shadowOffsetY = 10;
+{%- endif %}
+ctx.fillStyle = "{{ sticker['color'][4] }}";
+
+ctx.beginPath();
+ctx.moveTo(topLeft.x, topLeft.y);
+for (let i = 1; i < topEdge.length; i++) {
+  ctx.lineTo(topEdge[i].x, topEdge[i].y);
+}
+for (let i = 1; i < rightEdge.length; i++) {
+  ctx.lineTo(rightEdge[i].x, rightEdge[i].y);
+}
+for (let i = 1; i < bottomEdge.length; i++) {
+  ctx.lineTo(bottomEdge[i].x, bottomEdge[i].y);
+}
+for (let i = 1; i < leftEdge.length; i++) {
+  ctx.lineTo(leftEdge[i].x, leftEdge[i].y);
+}
+ctx.fill();
+
+{%- if sticker['pattern'] %}
+ctx.restore();
+const patternImg = new Image();
+patternImg.src = './patterns/{{ sticker['pattern'] }}.png';
+patternImg.onload = function() {
+const pattern = ctx.createPattern(patternImg, 'repeat');
+ctx.fillStyle = pattern;
+
+ctx.beginPath();
+ctx.moveTo(topLeft.x, topLeft.y);
+for (let i = 1; i < topEdge.length; i++) {
+  ctx.lineTo(topEdge[i].x, topEdge[i].y);
+}
+for (let i = 1; i < rightEdge.length; i++) {
+  ctx.lineTo(rightEdge[i].x, rightEdge[i].y);
+}
+for (let i = 1; i < bottomEdge.length; i++) {
+  ctx.lineTo(bottomEdge[i].x, bottomEdge[i].y);
+}
+for (let i = 1; i < leftEdge.length; i++) {
+  ctx.lineTo(leftEdge[i].x, leftEdge[i].y);
+}
+ctx.fill();
+}
+{%- endif %}
+{%- endwith %}

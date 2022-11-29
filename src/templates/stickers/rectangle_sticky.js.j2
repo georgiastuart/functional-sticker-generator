@@ -1,0 +1,32 @@
+{%- with w_ar=sticker['aspect_ratio'].strip().split('/')[0]|float, h_ar=sticker['aspect_ratio'].strip().split('/')[1]|float %}
+ctx.save();
+{%- if sticker['alpha'] %}
+ctx.globalAlpha = {{ sticker['alpha'] }};
+{%- endif %}
+{%- if sticker['shadow'] %}
+ctx.shadowColor = '#b8b9ba';
+ctx.shadowBlur = 10;
+ctx.shadowOffsetX = 10;
+ctx.shadowOffsetY = 10;
+{%- endif %}
+ctx.fillStyle = "{{ sticker['color'][4] }}";
+{%- if w_ar <= h_ar %}
+ctx.fillRect(100, 100, {{ w_ar / h_ar * 800 }}, 800);
+{%- else %}
+ctx.fillRect(100, 100, 800, {{ h_ar / w_ar * 800 }});
+{%- endif %}
+{%- if sticker['pattern'] %}
+ctx.restore();
+const patternImg = new Image();
+patternImg.src = './patterns/{{ sticker['pattern'] }}.png';
+patternImg.onload = function() {
+const pattern = ctx.createPattern(patternImg, 'repeat');
+ctx.fillStyle = pattern;
+{%- if w_ar <= h_ar %}
+ctx.fillRect(100, 100, {{ w_ar / h_ar * 800 }}, 800);
+{%- else %}
+ctx.fillRect(100, 100, 800, {{ h_ar / w_ar * 800 }});
+{%- endif %}
+}
+{%- endif %}
+{%- endwith %}
