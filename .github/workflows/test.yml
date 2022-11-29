@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.10"]
-        colors:
+        color:
           - '#823777'
           - '#d9cbb4'
           - '#f29807'
