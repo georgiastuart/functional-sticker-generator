@@ -16,6 +16,7 @@ jobs:
           - 'd9cbb4'
           - 'f29807'
           - '6da8ad'
+          - '000000'
     steps:
       - name: Checkout
         uses: actions/checkout@v3

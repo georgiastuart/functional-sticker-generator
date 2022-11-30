@@ -17,6 +17,22 @@ icons:
     code: f0c2
   - name: cloud-sun
     code: f6c4
+  - name: sun 
+    code: f185
+  - name: snow
+    code: f2dc
+  - name: stethoscope
+    code: f0f1
+  - name: utensils
+    code: f2e7
+  - name: mug-hot
+    code: f7b6
+  - name: wine-glass
+    code: f4e3
+  - name: glass-water
+    code: e4f4
+  - name: birthday
+    code: f1fd
 
 stickers:
   - name: plain-sticky
@@ -24,6 +40,29 @@ stickers:
   - name: plain-paper-sticky
     file: rectangle_sticky.js.j2
     pattern: light-paper-fibers
+  - name: plain-sticky-rounded
+    file: rectangle_sticky.js.j2
+    radius: 50
+  - name: plain-paper-sticky-rounded
+    file: rectangle_sticky.js.j2
+    pattern: light-paper-fibers
+    radius: 50
+  - name: plain-sticky-rounded-shadow
+    file: rectangle_sticky.js.j2
+    radius: 50
+    shadow: true
+  - name: plain-paper-sticky-rounded-shadow
+    file: rectangle_sticky.js.j2
+    pattern: light-paper-fibers
+    radius: 50
+    shadow: true
+  - name: plain-label
+    file: rectangle_sticky.js.j2
+    aspect_ratio: '4/1'
+  - name: plain-label-rounded
+    file: rectangle_sticky.js.j2
+    aspect_ratio: '4/1'
+    radius: 25
   - name: plain-sticky-skinny
     file: rectangle_sticky.js.j2
     aspect_ratio: '1/2'
@@ -31,6 +70,30 @@ stickers:
     file: rectangle_sticky.js.j2
     aspect_ratio: '1/2'
     pattern: light-paper-fibers
+  - name: plain-sticky-skinny-jagged
+    file: jagged_rectangle.js.j2
+    aspect_ratio: '1/2'
+    jagged_bottom: true 
+    seed: 11
+  - name: plain-paper-sticky-skinny-jagged
+    file: jagged_rectangle.js.j2
+    aspect_ratio: '1/2'
+    pattern: light-paper-fibers
+    jagged_bottom: true 
+    seed: 11
+  - name: plain-sticky-skinny-jagged-shadow
+    file: jagged_rectangle.js.j2
+    aspect_ratio: '1/2'
+    jagged_bottom: true 
+    seed: 11
+    shadow: true
+  - name: plain-paper-sticky-skinny-jagged-shadow
+    file: jagged_rectangle.js.j2
+    aspect_ratio: '1/2'
+    pattern: light-paper-fibers
+    jagged_bottom: true 
+    seed: 11
+    shadow: true
   - name: plain-sticky-shadow
     file: rectangle_sticky.js.j2
     shadow: true
@@ -59,6 +122,30 @@ stickers:
     jagged_right: true 
     aspect_ratio: "4/1"
     seed: 7
+    alpha: 0.5
+    offset: 0.2
+  - name: tape-translucent-2
+    file: jagged_rectangle.js.j2
+    jagged_left: true 
+    jagged_right: true 
+    aspect_ratio: "4/1"
+    seed: 8
+    alpha: 0.5
+    offset: 0.2
+  - name: tape-translucent-3
+    file: jagged_rectangle.js.j2
+    jagged_left: true 
+    jagged_right: true 
+    aspect_ratio: "4/1"
+    seed: 16
+    alpha: 0.5
+    offset: 0.2
+  - name: tape-skinny-translucent
+    file: jagged_rectangle.js.j2
+    jagged_left: true 
+    jagged_right: true 
+    aspect_ratio: "6/1"
+    seed: 20
     alpha: 0.5
     offset: 0.2
   - name: plain-dot
