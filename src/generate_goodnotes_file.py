@@ -23,7 +23,12 @@ def pack_release(args):
   sticker_glob = sticker_path.glob('*.png')
   j2_glob = sticker_path.glob('*.jp2')
 
-  rmtree(release_path / 'goodnotes')
+  try:
+    rmtree(release_path / 'goodnotes')
+  except FileNotFoundError:
+    # Above path doesn't exist, do nothing
+    pass 
+
   copytree(build_path / 'goodnotes', release_path / 'goodnotes')
 
   with open('src/assets/goodnotes_map.json', 'r') as fp:
