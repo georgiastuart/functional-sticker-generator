@@ -10,3 +10,4 @@
 - Pillow
 - playwright (Python)
 - Node / NPM
+- ImageMagick (linux utility, for generating goodnotes map files)

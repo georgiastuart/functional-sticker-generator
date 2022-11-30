@@ -1,44 +1,48 @@
 import zipfile
-from pathlib import Path, PurePath
+from pathlib import Path
 from os import mkdir
 from generator import build_stickers
 from PIL import Image, UnidentifiedImageError
-import numpy as np
+from subprocess import run
+import re
+import json
 
 
 def compare_stickers(sticker_path, template_path):
   stickers = list(sticker_path.glob('*.jp2'))
   print(len(stickers))
   templates_glob = list((template_path / 'attachments').glob('*'))
-  templates = []
 
-  for template in templates_glob:
-    try:
-        j2_img = Image.open(template)
-        j2_img = j2_img.convert('L')
-    except UnidentifiedImageError:
-      # It's probably a pdf we don't want to do anything with
-      print(f'Can\'t open {template.name}')
-      pass
-    templates.append({'img': j2_img, 'name': template.name})
-
-  print(len(templates))
   matches = 0
+  match_map = {}
   for sticker in stickers: 
     original_img = Image.open(sticker)
-    original_img = original_img.convert('L')
-    for template in templates:
-      match = False
+    local_match = []
+    # original_img = original_img.convert('LA')
+    for template in templates_glob:
       try:
-        match = np.allclose(np.array(original_img.getdata()), np.array(template['img'].getdata()))
-        # match = original_img.getdata() == template['img'].getdata()
-      except ValueError:
-        # Wrong shape probably
+        goodnotes_img = Image.open(template)
+      except UnidentifiedImageError:
+        # Probably a pdf file
         pass
-      if match:
-        matches += 1
-        print(f'Found match {matches}: {sticker.name} {template["name"]}')
-        break
+      if original_img.size == goodnotes_img.size:
+        p = run(['compare', '-metric', 'AE', '-fuzz', '3%', '-alpha', 'remove', '-background', 'white', sticker, template, '/dev/null'], capture_output=True, text=True)
+        try:
+          local_match.append(float(re.match(r"(?:\d*.?\d*)", p.stderr).group(0)))
+        except AttributeError:
+          local_match.append(float(p.stderr))
+      else: 
+        local_match.append(100000000000)
+        
+    print(min(local_match))
+    # if min(local_match) < 1000:
+    matches += 1
+    print(f'Found match {matches}: {sticker.name} {templates_glob[local_match.index(min(local_match))].name}')
+    match_map[sticker.with_suffix('').name] = templates_glob[local_match.index(min(local_match))].with_suffix('').name
+        
+  with open('goodnotes_map.json', 'w') as fp:
+    json.dump(match_map, fp, indent=2)
+
 class Args:
   def __init__(self, color, config, outfile):
     self.color = color
@@ -46,27 +50,27 @@ class Args:
     self.outfile = outfile
 
 if __name__ == "__main__":
-  with zipfile.ZipFile(Path(Path(__file__).parent.resolve(), 'assets/sticker_template.goodnotes'), 'r') as zip_ref:
-    d = Path(__file__).parent.resolve()
-    sticker_path = d / 'assets' / 'stickers'
-    template_path = d / 'assets' / 'sticker_template'
+  d = Path(__file__).parent.parent
+  sticker_path = d / 'build' / 'stickers'
+  template_path = d / 'build' / 'goodnotes'
 
+  with zipfile.ZipFile(Path(Path(__file__).parent.resolve(), 'assets/sticker_template.goodnotes'), 'r') as zip_ref:
     try:
       mkdir(template_path)
     except FileExistsError:
       pass
     zip_ref.extractall(template_path)
 
-    try: 
-      mkdir(sticker_path)
-    except FileExistsError:
-      pass
+  try: 
+    mkdir(sticker_path)
+  except FileExistsError:
+    pass
 
-    args = Args(
-      '#000000', 
-      d / 'sticker_config.yml',
-      sticker_path
-    )
+  args = Args(
+    '#000000', 
+    d / 'sticker_config.yml',
+    d / 'build'
+  )
 
-    build_stickers(args, format='jpeg2000', quality=92, extension='jp2')
-    compare_stickers(sticker_path, template_path)
+  build_stickers(args, formats=[{'format': 'jpeg2000', 'extension': 'jp2', 'quality': 92}])
+  compare_stickers(sticker_path, template_path)

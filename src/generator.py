@@ -13,7 +13,7 @@ from PIL import Image
 from base64 import b64decode
 from time import sleep
 
-def build_stickers(args, format='png', extension='png', quality=100):
+def build_stickers(args, formats=[{'format': 'png', 'extension': 'png', 'quality': 100}]):
   with open(args.config, 'r') as fp:
     config = yaml.safe_load(fp)
     stickers = config['stickers']
@@ -48,7 +48,7 @@ def build_stickers(args, format='png', extension='png', quality=100):
   with open(Path(args.outfile, 'stickers.js'), 'w') as fp:
     fp.write(env.get_template('stickers.js.j2').render(stickers=stickers))
 
-  generate_pngs(Path(args.outfile, 'index.html'), Path(args.outfile, 'stickers.js'), args.outfile, args, format=format, extension=extension, quality=quality)
+  generate_pngs(Path(args.outfile, 'index.html'), Path(args.outfile, 'stickers.js'), args.outfile, args, formats=formats)
 
 def generate_colors(hex_value):
   colors = [hex_value]
@@ -73,7 +73,7 @@ def generate_colors(hex_value):
 
   return colors
 
-def generate_pngs(html_file, js_file, out_directory, args, format='png', extension='png', quality=100):
+def generate_pngs(html_file, js_file, out_directory, args, formats=[{'format': 'png', 'extension': 'png', 'quality': 100}]):
   def setup_http_server():
     class Handler(SimpleHTTPRequestHandler):
       def __init__(self, *args, **kwargs):
@@ -107,7 +107,8 @@ def generate_pngs(html_file, js_file, out_directory, args, format='png', extensi
 
     img = Image.open(BytesIO(b64decode(data)))
     img = img.crop(img.getbbox())
-    img.save(Path(args.outfile, f'{id}.{extension}'), f'{format}', quality=quality)
+    for format in formats:
+      img.save(Path(args.outfile, 'stickers', f'{id}.{format["extension"]}'), f'{format["format"]}', quality=format['quality'])
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(prog="Functional Sticker Generator",
