@@ -48,7 +48,7 @@ def build_stickers(args, format='png', extension='png', quality=100):
   with open(Path(args.outfile, 'stickers.js'), 'w') as fp:
     fp.write(env.get_template('stickers.js.j2').render(stickers=stickers))
 
-  generate_pngs(Path(args.outfile, 'index.html'), args.outfile / 'stickers.js', args.outfile, args, format=format, extension=extension, quality=quality)
+  generate_pngs(Path(args.outfile, 'index.html'), Path(args.outfile, 'stickers.js'), args.outfile, args, format=format, extension=extension, quality=quality)
 
 def generate_colors(hex_value):
   colors = [hex_value]
