@@ -5,6 +5,7 @@ from pathlib import Path
 import json
 import argparse
 from subprocess import run
+import zipfile
 
 def mkdir_if_not_exists(path):
   try:
@@ -29,7 +30,12 @@ def pack_release(args):
     # Above path doesn't exist, do nothing
     pass 
 
-  copytree(build_path / 'goodnotes', release_path / 'goodnotes')
+  with zipfile.ZipFile(Path(Path(__file__).parent.resolve(), 'assets/sticker_template.goodnotes'), 'r') as zip_ref:
+    try:
+      mkdir(release_path / 'goodnotes')
+    except FileExistsError:
+      pass
+    zip_ref.extractall(release_path / 'goodnotes')
 
   with open('src/assets/goodnotes_map.json', 'r') as fp:
     mapping = json.load(fp)
