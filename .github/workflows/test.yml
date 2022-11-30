@@ -30,14 +30,16 @@ jobs:
         with:
           auto-update-conda: true 
           python-version: ${{ matrix.python-version }}
+      - name: Install imagemagick
+        run: apt-get -y install imagemagick
       - name: Install python dependencies
         run: yes | pip install Jinja2 playwright Pillow webcolors pyyaml
       - name: Install playwright browsers
         run: playwright install
       - name: Build planner pages 
-        run: npm run build -- --color "#${{ matrix.color }}"
+        run: npm run release -- --color "#${{ matrix.color }}"
       - name: Zip images
-        run: rm build/stickers/.gitignore && mkdir stickers-${{ matrix.color }} && cp build/stickers/* stickers-${{ matrix.color }} && zip -r stickers-${{ matrix.color }}.zip stickers-${{ matrix.color }}
+        run: mkdir stickers-${{ matrix.color }} && cp -r release/* stickers-${{ matrix.color }} && zip -r stickers-${{ matrix.color }}.zip stickers-${{ matrix.color }}
       - name: Upload planner pdf to artifacts
         uses: actions/upload-artifact@v3
         with:

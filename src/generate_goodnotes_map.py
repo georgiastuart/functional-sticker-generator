@@ -9,24 +9,27 @@ import json
 
 
 def compare_stickers(sticker_path, template_path):
-  stickers = list(sticker_path.glob('*.jp2'))
+  stickers = list(sticker_path.glob('*.png'))
   print(len(stickers))
   templates_glob = list((template_path / 'attachments').glob('*'))
 
   matches = 0
   match_map = {}
   for sticker in stickers: 
-    original_img = Image.open(sticker)
-    local_match = []
+    run(['convert', sticker, f'JP2:{ sticker.with_suffix(".jp2") }'])
     # original_img = original_img.convert('LA')
-    for template in templates_glob:
-      try:
-        goodnotes_img = Image.open(template)
-      except UnidentifiedImageError:
-        # Probably a pdf file
-        pass
+  for template in templates_glob:
+    local_match = []
+    try:
+      goodnotes_img = Image.open(template)
+    except UnidentifiedImageError:
+      # Probably a pdf file
+      pass
+
+    for sticker in stickers:
+      original_img = Image.open(sticker.with_suffix(".jp2"))
       if original_img.size == goodnotes_img.size:
-        p = run(['compare', '-metric', 'AE', '-fuzz', '3%', '-alpha', 'remove', '-background', 'white', sticker, template, '/dev/null'], capture_output=True, text=True)
+        p = run(['compare', '-metric', 'AE', '-fuzz', '3%', '-alpha', 'remove', '-background', 'white', sticker.with_suffix(".jp2"), template, '/dev/null'], capture_output=True, text=True)
         try:
           local_match.append(float(re.match(r"(?:\d*.?\d*)", p.stderr).group(0)))
         except AttributeError:
@@ -35,12 +38,12 @@ def compare_stickers(sticker_path, template_path):
         local_match.append(100000000000)
         
     print(min(local_match))
-    # if min(local_match) < 1000:
-    matches += 1
-    print(f'Found match {matches}: {sticker.name} {templates_glob[local_match.index(min(local_match))].name}')
-    match_map[sticker.with_suffix('').name] = templates_glob[local_match.index(min(local_match))].with_suffix('').name
+    if min(local_match) < 1000:
+      matches += 1
+      print(f'Found match {matches}: {stickers[local_match.index(min(local_match))].with_suffix("").name} {template.with_suffix("").name}')
+      match_map[template.with_suffix('').name] = stickers[local_match.index(min(local_match))].with_suffix('').name
         
-  with open('goodnotes_map.json', 'w') as fp:
+  with open('src/assets/goodnotes_map.json', 'w') as fp:
     json.dump(match_map, fp, indent=2)
 
 class Args:
@@ -72,5 +75,5 @@ if __name__ == "__main__":
     d / 'build'
   )
 
-  build_stickers(args, formats=[{'format': 'jpeg2000', 'extension': 'jp2', 'quality': 92}])
+  build_stickers(args)
   compare_stickers(sticker_path, template_path)

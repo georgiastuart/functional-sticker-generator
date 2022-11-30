@@ -106,9 +106,9 @@ def generate_pngs(html_file, js_file, out_directory, args, formats=[{'format': '
     id = image_b64['id']
 
     img = Image.open(BytesIO(b64decode(data)))
-    img = img.crop(img.getbbox())
+    img = img.crop(img.getbbox()).convert('RGBA')
     for format in formats:
-      img.save(Path(args.outfile, 'stickers', f'{id}.{format["extension"]}'), f'{format["format"]}', quality=format['quality'])
+      img.save(Path(args.outfile, 'stickers', f'{id}.{format["extension"]}'), f'{format["format"]}', quality=format['quality'], no_jp2=False)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(prog="Functional Sticker Generator",
@@ -116,8 +116,8 @@ if __name__ == "__main__":
 
   parser.add_argument('-c', '--color', type=str, required=True, help='Hex code for desired color.')
   parser.add_argument('-f', '--font', type=str, help='Google Font name', default='Playfair Display')
-  parser.add_argument('--config', type=str, default='./src/sticker_config.yml', help='YAML sticker config file.')
-  parser.add_argument('--outfile', type=str, default='build/stickers', help='Directory to save stickers to.')
+  parser.add_argument('--config', type=str, default='src/assets/sticker_config.yml', help='YAML sticker config file.')
+  parser.add_argument('--outfile', type=str, default='build', help='Directory to save stickers to.')
 
   args = parser.parse_args()
 
