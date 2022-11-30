@@ -55,6 +55,7 @@ def pack_release(args):
 
   make_archive(release_path / f'stickers_{args.color.lstrip("#")}.goodnotes', 'zip', release_path / 'goodnotes')
   rename(release_path / f'stickers_{args.color.lstrip("#")}.goodnotes.zip', release_path / f'stickers_{args.color.lstrip("#")}.goodnotes')
+  rmtree(release_path / 'goodnotes')
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(prog="Functional Sticker Generator",
