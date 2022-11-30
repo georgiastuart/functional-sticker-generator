@@ -5,12 +5,50 @@ import colorsys
 import jinja2 as j2
 from playwright.sync_api import sync_playwright
 from os.path import abspath
+from pathlib import Path
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from multiprocessing import Process
 from io import BytesIO
 from PIL import Image
 from base64 import b64decode
 from time import sleep
+
+def build_stickers(args, format='png', extension='png', quality=100):
+  with open(args.config, 'r') as fp:
+    config = yaml.safe_load(fp)
+    stickers = config['stickers']
+    icons = config['icons']
+
+  for icon in icons:
+    stickers.append({
+      'name': f'icon-{ icon["name"] }',
+      'icon': icon['code'],
+      'file': 'circle.js.j2'
+    })
+
+  color_array = generate_colors(args.color)
+
+  for i in range(len(stickers)):
+    stickers[i]['color'] = color_array
+
+    try: 
+      stickers[i]['aspect_ratio']
+    except KeyError:
+      stickers[i]['aspect_ratio'] = '1/1'
+
+  env = j2.Environment(
+    loader=j2.FileSystemLoader('./src/templates')
+  )
+
+  pages = [env.get_template('stickers.html.j2').render(stickers=stickers)]
+
+  with open(args.outfile / 'index.html', 'w') as fp:
+    fp.write(env.get_template('full_page.html.j2').render(pages=pages))
+
+  with open(args.outfile / 'stickers.js', 'w') as fp:
+    fp.write(env.get_template('stickers.js.j2').render(stickers=stickers))
+
+  generate_pngs(args.outfile / 'index.html', args.outfile / 'stickers.js', args.outfile, args, format=format, extension=extension, quality=quality)
 
 def generate_colors(hex_value):
   colors = [hex_value]
@@ -35,11 +73,11 @@ def generate_colors(hex_value):
 
   return colors
 
-def generate_pngs(html_file, js_file, out_directory):
+def generate_pngs(html_file, js_file, out_directory, args, format='png', extension='png', quality=100):
   def setup_http_server():
     class Handler(SimpleHTTPRequestHandler):
       def __init__(self, *args, **kwargs):
-          super().__init__(*args, directory='./build', **kwargs)
+          super().__init__(*args, directory=out_directory, **kwargs)
     httpd = HTTPServer(('', 8097), Handler)
     httpd.serve_forever()
 
@@ -69,7 +107,7 @@ def generate_pngs(html_file, js_file, out_directory):
 
     img = Image.open(BytesIO(b64decode(data)))
     img = img.crop(img.getbbox())
-    img.save(f'build/stickers/{id}.png', 'PNG')
+    img.save(Path(args.outfile, f'{id}.{extension}'), f'{format}', quality=quality)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(prog="Functional Sticker Generator",
@@ -77,42 +115,9 @@ if __name__ == "__main__":
 
   parser.add_argument('-c', '--color', type=str, required=True, help='Hex code for desired color.')
   parser.add_argument('-f', '--font', type=str, help='Google Font name', default='Playfair Display')
-  parser.add_argument('--config', type=str, default='./src/sticker_config.yml', help='YAML sticker config file')
+  parser.add_argument('--config', type=str, default='./src/sticker_config.yml', help='YAML sticker config file.')
+  parser.add_argument('--outfile', type=str, default='build/stickers', help='Directory to save stickers to.')
 
   args = parser.parse_args()
 
-  with open(args.config, 'r') as fp:
-    config = yaml.safe_load(fp)
-    stickers = config['stickers']
-    icons = config['icons']
-
-  for icon in icons:
-    stickers.append({
-      'name': f'icon-{ icon["name"] }',
-      'icon': icon['code'],
-      'file': 'circle.js.j2'
-    })
-
-  color_array = generate_colors(args.color)
-
-  for i in range(len(stickers)):
-    stickers[i]['color'] = color_array
-
-    try: 
-      stickers[i]['aspect_ratio']
-    except KeyError:
-      stickers[i]['aspect_ratio'] = '1/1'
-
-  env = j2.Environment(
-    loader=j2.FileSystemLoader('./src/templates')
-  )
-
-  pages = [env.get_template('stickers.html.j2').render(stickers=stickers)]
-
-  with open('build/index.html', 'w') as fp:
-    fp.write(env.get_template('full_page.html.j2').render(pages=pages))
-
-  with open('build/stickers.js', 'w') as fp:
-    fp.write(env.get_template('stickers.js.j2').render(stickers=stickers))
-
-  generate_pngs('build/index.html', 'build/stickers.js', 'build/stickers')
+  build_stickers(args)
