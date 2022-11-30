@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "goodnotes": "python src/generate_goodnotes_map.py",
     "tailwind": "python src/generate_tailwind_config.py",
     "build": "python src/generator.py"
   },
