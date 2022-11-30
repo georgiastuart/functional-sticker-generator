@@ -42,13 +42,13 @@ def build_stickers(args, format='png', extension='png', quality=100):
 
   pages = [env.get_template('stickers.html.j2').render(stickers=stickers)]
 
-  with open(args.outfile / 'index.html', 'w') as fp:
+  with open(Path(args.outfile, 'index.html'), 'w') as fp:
     fp.write(env.get_template('full_page.html.j2').render(pages=pages))
 
-  with open(args.outfile / 'stickers.js', 'w') as fp:
+  with open(Path(args.outfile, 'stickers.js'), 'w') as fp:
     fp.write(env.get_template('stickers.js.j2').render(stickers=stickers))
 
-  generate_pngs(args.outfile / 'index.html', args.outfile / 'stickers.js', args.outfile, args, format=format, extension=extension, quality=quality)
+  generate_pngs(Path(args.outfile, 'index.html'), args.outfile / 'stickers.js', args.outfile, args, format=format, extension=extension, quality=quality)
 
 def generate_colors(hex_value):
   colors = [hex_value]
