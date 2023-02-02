@@ -150,3 +150,5 @@ stickers:
     offset: 0.2
   - name: plain-dot
     file: circle.js.j2
+  - name: coffee-cup
+    file: svgs/coffee/cup.js.j2

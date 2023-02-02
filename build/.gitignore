@@ -4,7 +4,7 @@
 !patterns/*
 !stickers
 !stickers/*
-!images
-!images/*
+# !images
+# !images/*
 !goodnotes
 !goodnotes/*
