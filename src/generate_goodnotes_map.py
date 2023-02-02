@@ -70,7 +70,7 @@ if __name__ == "__main__":
     pass
 
   args = Args(
-    '#000000', 
+    '#737373', 
     d / 'sticker_config.yml',
     d / 'build'
   )
